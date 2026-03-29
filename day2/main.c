@@ -18,3 +18,17 @@ int main()
 
 // remember it prints in term of bytes and not bits.
 // 1 byte = 8 bits
+
+/*
+sizeof(int) always returns the size in bytes, not bits. To convert it to bits, just multiply by 8 (since 1 byte = 8 bits on almost all modern systems).
+
+
+Multiply the result of `sizeof(int)` by 8 (or better, `CHAR_BIT`) to get bits:
+
+```c
+sizeof(int) * CHAR_BIT
+```
+
+That should cover the request.
+
+*/
