@@ -7,18 +7,91 @@
 ### Theory
 
 1. What does `gcc -Wall -Wextra -g` do? Explain each flag.
+
+- `gcc -Wall -Wextra -g` it prints the results when building a file to show if there are warnings into the problem such as untiliazed variables, trying to convert int to a string.
+
 2. What is the difference between a compiler and an assembler?
+
+- Compler converts human code into machine code so that the assembler can understand but assmbler what it does is that converts machine code into 0s and 1s so that the CPU can understand those instructions.
+
 3. What are the 4 stages of C compilation (preprocessing, compilation, assembly, linking)?
+
+- preprocessing involves checking for preprocessor directives into the project for exampel `#include<stdio.h>`.
+
+- complication involves converting machine code into the asembly code so that CPUs can understand.
+
 4. What file does `gcc` produce by default if you don't use `-o`?
+
+- It produces the `./a.out` file.
+
 5. What is a `Makefile` and why use one instead of typing `gcc` manually?
+
+- Basically Makefile saves time, prevents rebuilding which helps to save computation for the machine, so Makefile it is a tool which is used to configure into the gcc should run files into the machine.
 
 ### Practical
 
 1. Write a program that prints your name and age on separate lines.
+
+```c
+#include <stdio.h>
+
+int main()
+{
+
+  int age = 23;
+  char name[] = "Njox";
+
+  printf("My name is: %s\n", name);
+  printf("My age is: %d\n", age);
+
+  return 0;
+}
+```
+
 2. Compile it using `gcc` with debug symbols enabled. Then use `file` command on the output binary — what does it tell you?
+
+```Makefile
+# target dep
+printName: printName.c
+	gcc printName.c -o printName -Wall -Wextra -g
+
+# clean
+clean:
+	rm -rf main a.out main.o printName
+```
+
+```sh
+└─$ file printName
+printName: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=3317f5e7aa4eee14cc55e4089435d4df9fb05880, for GNU/Linux 3.2.0, with debug_info, not stripped
+```
+
+- it tells me that the file is 64 bit, executable and CPU architecture is x86-64 and debugger is GNU/Linux.
+
 3. Write a Makefile with `build`, `clean`, and `run` targets.
+
+```Makefile
+CC = gcc
+CFLAGS = -Wall -Wextra -g
+CFILENAME = main.c
+CBUILDFILE = main
+
+main.c: main
+	$(CC) -o $(CBUILDFILE) $(CFLAGS)
+
+run:
+	./CBUILDFILE
+
+clean:
+	rm -rf a.out $(CBUILDFILE) main.o
+```
+
 4. Use `gcc -E main.c` to see preprocessor output. What does `#include <stdio.h>` actually do?
+
+- The stdio.h is the preprocessor directives which contains pre-written files which are used into Kali linux for compiling files and provides pre written files for the machine.
+
 5. Compile your program to assembly with `gcc -S main.c`. Open `main.s` — can you find your string in it?
+
+- I get a list of code which are written into assembly code which are scarry.
 
 ---
 
@@ -26,15 +99,45 @@
 
 ### Theory
 
-1. How many bits are in 1 byte?
+1. How many bits are in 1 byte? 8 bit
 2. What is the difference between `int`, `short`, `long`, and `long long` in terms of size?
+
+- int has 4 bytes, short 4, long 8, long long 8.
+
 3. Why does `sizeof(void *)` return the same value regardless of what it points to?
+
+- 4 bytes
+
 4. What format specifier do you use to print `sizeof()` results and why?
+
+- `%zu` is used to format the size of the data type.
+
 5. Why might `sizeof(int)` differ on a 32-bit vs 64-bit machine?
+
+- because of different data size architecture also based on data model for some of the CPUs
 
 ### Practical
 
 1. Write a program that prints the size of every basic C type (`char`, `short`, `int`, `long`, `long long`, `float`, `double`, `void *`) in both **bytes and bits**.
+
+```c
+#include <stdio.h>
+
+int main()
+{
+    printf("The size of char: %zu\n", sizeof(char));
+    printf("The size of short: %zu\n", sizeof(short));
+    printf("The size of int: %zu\n", sizeof(int));
+    printf("The size of long: %zu\n", sizeof(long));
+    printf("The size of long long: %zu\n", sizeof(long long));
+    printf("The size of float: %zu\n", sizeof(float));
+    printf("The size of double: %zu\n", sizeof(double));
+    printf("The size of void: %zu\n", sizeof(void *));
+
+    return 0;
+}
+```
+
 2. What does this print and why?
    ```c
    char a = 127;
@@ -43,6 +146,28 @@
    ```
 3. Write a program that shows the **range** (min and max) of `char`, `int`, and `long` using `<limits.h>`.
 4. Declare a `struct` with a `char`, an `int`, and a `double`. Print `sizeof()` of the struct. Is it equal to the sum of its members? Why or why not?
+
+```c
+#include <stdio.h>
+
+struct Info
+{
+    int age;
+    double salary;
+    char name[12];
+};
+
+int main()
+{
+    // Declare a `struct` with a `char`, an `int`, and a `double`. Print `sizeof()` of the struct. Is it equal to the sum of its members? Why or why not?
+    struct Info person;
+
+    printf("The size of struct: %zu\n", sizeof(person));
+
+    return 0;
+}
+```
+
 5. Use `xxd` to inspect the binary of your compiled program. Can you find the string literals in the hex dump?
 
 ---
@@ -72,14 +197,26 @@
 ### Theory
 
 1. What is the difference between `&x` and `*p`?
+
+- & stores the memory address of the variable and \* stores the value of the pointer variable.
+
 2. If `int *p = &x`, what does `p` hold vs what does `*p` hold?
+
+- p holds the memory location of x while \*p stores the value of the varibale.
+
 3. What happens if you dereference a NULL pointer?
 4. What is pointer arithmetic — what does `p + 1` actually add in bytes if `p` is an `int *`?
+
+- Pointer arithmetic is the operation of adding a value into the pointer and `p + 1` moves the pointer one step based on the size of the variable.
+
 5. Why do pointers matter in reverse engineering? (Think: memory addresses, stack, heap)
+
+- Pointers matters because it helps to get memory location of the variables into the system also helps to get the memory location of the variable based on variable.
 
 ### Practical
 
 1. Write a program that declares an `int`, creates a pointer to it, modifies the value through the pointer, and prints both the value and the address.
+
 2. Given `int arr[] = {10, 20, 30, 40, 50}`, use a pointer (not `arr[i]`) to print all elements.
 3. Write a `void swap(int *a, int *b)` function and demonstrate it works.
 4. What does this print?
